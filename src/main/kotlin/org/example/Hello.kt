@@ -63,14 +63,14 @@ fun main(args: Array<String>) {
         Gson().toJson(room)
     }
 
-    Spark.get("instance"){r,_ ->
+    Spark.get("getRoomState"){r,_ ->
         val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() } as Room
         Gson().toJson(room)
     }
 
 
     Spark.get("getWord"){_,_ ->
-        val index = Random(words.size - 1).nextInt()
+        val index = Random.nextInt(words.size)
         val word = words[index]
         word
     }
