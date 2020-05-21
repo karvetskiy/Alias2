@@ -42,7 +42,6 @@ fun main(args: Array<String>) {
         val roomid = r.queryParams("roomid").toInt()
         val user = User()
         val room = rooms.find { it.roomid == roomid } as Room
-        isUserIDExist(user, room)
         room.users.add(user)
         user.userid
     }
@@ -86,12 +85,6 @@ fun main(args: Array<String>) {
 fun isRoomIDExist(id: Int, room: Room){
     while (rooms.find{ it.roomid == id }!=null){
         room.createRoomID()
-    }
-}
-
-fun isUserIDExist(user: User, room: Room){
-    while (room.users.find{it.userid == user.userid}!=null){
-        user.createUserID()
     }
 }
 
