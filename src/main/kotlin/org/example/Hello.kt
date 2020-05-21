@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
         val room = rooms.find { it.roomid == roomid } as Room
         isUserIDExist(user, room)
         room.users.add(user)
-        room
+        user.userid
     }
 
     //Удаляем игрока из комнаты
@@ -61,12 +61,12 @@ fun main(args: Array<String>) {
         val activeUserID = r.queryParams("userid").toInt()
         val room = rooms.find {it.roomid == r.queryParams("roomid").toInt()} as Room
         room.activeUserID = activeUserID
-        room
+        Gson().toJson(room)
     }
 
     Spark.get("instance"){r,_ ->
         val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() } as Room
-        room
+        Gson().toJson(room)
     }
 
 
