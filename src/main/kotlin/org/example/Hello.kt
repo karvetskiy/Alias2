@@ -1,36 +1,41 @@
 package org.example
 
+import com.google.gson.Gson
 import dev.karvetskiy.Room
 import dev.karvetskiy.User
 import spark.Spark
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 val rooms = ArrayList<Room>()
+val words = listOf("КОМПОЗИТОР", "КАРНИЗ", "ЛОБОТОМИЯ", "САНАТОРИЙ", "РЕВИЗОР", "ЛАВАНДА", "ВЫДРА")
+
 
 fun main(args: Array<String>) {
 
+    var portNumber = if (args.isNotEmpty()){
+        args[0].toInt()
+    } else
+        9999
 
-    var portNumber = 9999
+    println("Connect to http://localhost:$portNumber")
 
-    try{
-        portNumber = args[0].toInt()
-    }catch (e: Exception){
-        e.printStackTrace()
-    }
     //подключаемся к полученному порту
     Spark.port(portNumber)
 
     //Создаем комнату
     Spark.get("createRoom"){ _, _ ->
         val room = Room()
-        isRoomIDExist(room.id, room)
+        isRoomIDExist(room.roomid, room)
         rooms.add(room)
-        room
+        Gson().toJson(room)
     }
 
     //Удаляем комнату
-    Spark.post("destroyRoom"){r,_ ->
+    Spark.get("destroyRoom"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
-        val index = rooms.indexOf(rooms.find{it.id.toInt() == roomid})
+        val index = rooms.indexOf(rooms.find{it.roomid == roomid})
         rooms.removeAt(index)
         ""
     }
@@ -39,41 +44,40 @@ fun main(args: Array<String>) {
     Spark.get("addUser"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
         val user = User()
-        val room = rooms.find { it.id.toInt() == roomid } as Room
+        val room = rooms.find { it.roomid == roomid } as Room
         isUserIDExist(user, room)
         room.users.add(user)
         room
     }
 
     //Удаляем игрока из комнаты
-    Spark.post("deleteUser"){r,_ ->
+    Spark.get("deleteUser"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
         val userid = r.queryParams("userid").toInt()
-        val room = rooms.find { it.id.toInt() == roomid } as Room
-        room.users.remove(room.users.find { it.id.toInt()==userid })
+        val room = rooms.find { it.roomid == roomid } as Room
+        room.users.remove(room.users.find { it.userid==userid })
         ""
     }
 
     //Изменение активного игрока
-    Spark.post("activeUser"){r,_ ->
+    Spark.get("activeUser"){r,_ ->
         val activeUserID = r.queryParams("userid").toInt()
-        val room = rooms.find {it.id.toInt() == r.queryParams("roomid").toInt()} as Room
+        val room = rooms.find {it.roomid == r.queryParams("roomid").toInt()} as Room
         room.activeUserID = activeUserID
-        ""
+        room
     }
 
     Spark.get("instance"){r,_ ->
-        val room = rooms.find { it.id.toInt() == r.queryParams("roomid").toInt() } as Room
+        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() } as Room
         room
     }
 
 
     Spark.get("getWord"){_,_ ->
-        val word = "WORD"
+        val index = Random(words.size - 1).nextInt()
+        val word = words[index]
         word
     }
-
-
 
 
     //Обработка некорректных запросов
@@ -82,14 +86,14 @@ fun main(args: Array<String>) {
     }
 }
 
-fun isRoomIDExist(id: Integer, room: Room){
-    while (rooms.find{it.id == id}!=null){
+fun isRoomIDExist(id: Int, room: Room){
+    while (rooms.find{ it.roomid == id }!=null){
         room.createRoomID()
     }
 }
 
 fun isUserIDExist(user: User, room: Room){
-    while (room.users.find{it.id == user.id}!=null){
+    while (room.users.find{it.userid == user.userid}!=null){
         user.createUserID()
     }
 }

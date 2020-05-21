@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class Room {
-    lateinit var id: Integer
+    var roomid = 0
     val users = ArrayList<User>()
     var activeUserID = 0
 
@@ -13,7 +13,7 @@ class Room {
     }
 
     fun createRoomID(){
-        id =(1000 + Random().nextInt(9000)) as Integer
+        roomid =(1000 + Random().nextInt(9000))
     }
 
 
