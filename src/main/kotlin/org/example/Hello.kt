@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
     Spark.get("addUser"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
         val user = User()
-        val room = rooms.find { it.roomid == roomid } as Room
+        val room = rooms.find { it.roomid == roomid }!!
         room.users.add(user)
         user.userid
     }
