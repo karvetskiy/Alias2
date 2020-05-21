@@ -1,4 +1,4 @@
-package dev.karvetskiy
+package org.example
 
 import java.util.*
 

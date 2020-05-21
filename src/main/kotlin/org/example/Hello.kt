@@ -1,10 +1,7 @@
 package org.example
 
 import com.google.gson.Gson
-import dev.karvetskiy.Room
-import dev.karvetskiy.User
 import spark.Spark
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
