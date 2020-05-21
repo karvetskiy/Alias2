@@ -1,0 +1,1 @@
+web: java -jar target/Alias2-1.0-SNAPSHOT-jar-with-dependencies.jar $PORT
