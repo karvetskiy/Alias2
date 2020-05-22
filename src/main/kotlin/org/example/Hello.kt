@@ -29,13 +29,6 @@ fun main(args: Array<String>) {
         Gson().toJson(room)
     }
 
-    //Удаляем комнату
-    Spark.get("destroyRoom"){r,_ ->
-        val roomid = r.queryParams("roomid").toInt()
-        val index = rooms.indexOf(rooms.find{it.roomid == roomid})
-        rooms.removeAt(index)
-        ""
-    }
 
     //Добавляем игрока в комнату
     Spark.get("addUser"){r,_ ->
@@ -46,25 +39,41 @@ fun main(args: Array<String>) {
         user.userid
     }
 
-    //Удаляем игрока из комнаты
+    // Следующий игрок
+    Spark.get("nextUser"){r,_ ->
+        val roomid = r.queryParams("roomid").toInt()
+        val room = rooms.find { it.roomid == roomid } as Room
+        var nextUserIndex = room.users.indexOf(room.activeUserID) + 1
+        if (nextUserIndex > room.users.size){
+            nextUserIndex = 0
+        }
+        room.activeUserID = room.users[nextUserIndex].userid
+        ""
+    }
+
     Spark.get("deleteUser"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
         val userid = r.queryParams("userid").toInt()
-        val room = rooms.find { it.roomid == roomid } as Room
-        room.users.remove(room.users.find { it.userid==userid })
+        val room = rooms.find { it.roomid == roomid }!!
+        val user = room.users.find { it.userid == userid }!!
+        if (room.users.size == 1){
+            rooms.remove(room)
+        }else {
+            room.users.remove(user)
+        }
         ""
     }
 
     //Изменение активного игрока
     Spark.get("activeUser"){r,_ ->
         val activeUserID = r.queryParams("userid").toInt()
-        val room = rooms.find {it.roomid == r.queryParams("roomid").toInt()} as Room
+        val room = rooms.find {it.roomid == r.queryParams("roomid").toInt()}!!
         room.activeUserID = activeUserID
         Gson().toJson(room)
     }
 
     Spark.get("getRoomState"){r,_ ->
-        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() } as Room
+        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }
         Gson().toJson(room)
     }
 
@@ -73,6 +82,14 @@ fun main(args: Array<String>) {
         val index = Random.nextInt(words.size)
         val word = words[index]
         word
+    }
+
+    Spark.get("updateOnServer"){r,_ ->
+        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
+        val user = room.users.find { it.userid == r.queryParams("userid").toInt() }!!
+        val score = r.queryParams("score").toInt()
+        user.score = score
+        ""
     }
 
 
