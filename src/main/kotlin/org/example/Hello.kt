@@ -43,7 +43,8 @@ fun main(args: Array<String>) {
     Spark.get("nextUser"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
         val room = rooms.find { it.roomid == roomid } as Room
-        var nextUserIndex = room.users.indexOf(room.activeUserID) + 1
+        val activeUser = room.users.find { it.userid == room.activeUserID }!!
+        var nextUserIndex = room.users.indexOf(activeUser) + 1
         if (nextUserIndex > room.users.size){
             nextUserIndex = 0
         }
