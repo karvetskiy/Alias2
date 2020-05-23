@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
     Spark.get("getWord"){_,_ ->
         val index = Random.nextInt(words.size)
         val word = words[index]
-        word
+        Gson().toJson(word)
     }
 
     Spark.get("updateOnServer"){r,_ ->
