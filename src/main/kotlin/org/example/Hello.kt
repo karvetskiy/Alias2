@@ -90,7 +90,14 @@ fun main(args: Array<String>) {
         val user = room.users.find { it.userid == r.queryParams("userid").toInt() }!!
         val score = r.queryParams("score").toInt()
         user.score = score
+        user.username = r.queryParams("un")
         ""
+    }
+
+    Spark.get("winner"){r,_ ->
+        val room = rooms.find {it.roomid == r.queryParams("roomid").toInt() }!!
+        val winner = room.users.maxBy { it -> it.score }!!
+        Gson().toJson(winner)
     }
 
 
