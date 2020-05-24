@@ -2,6 +2,7 @@ package org.example
 
 import com.google.gson.Gson
 import spark.Spark
+import java.util.logging.Logger
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
@@ -42,13 +43,19 @@ fun main(args: Array<String>) {
     // Следующий игрок
     Spark.get("nextUser"){r,_ ->
         val roomid = r.queryParams("roomid").toInt()
-        val room = rooms.find { it.roomid == roomid } as Room
-        val activeUser = room.users.find { it.userid == room.activeUserID }!!
+        System.err.println("roomid writed")
+        val room = rooms.find { it.roomid == roomid }!!
+        System.err.println("room created")
+        var activeUser = User()
+        room.users.find { it.userid == room.activeUserID}?.let { activeUser = it }
+        System.err.println("user found")
         var nextUserIndex = room.users.indexOf(activeUser) + 1
         if (nextUserIndex > room.users.size){
             nextUserIndex = 0
+            System.err.println("indx changed")
         }
         room.activeUserID = room.users[nextUserIndex].userid
+        System.err.println("AU changed")
         ""
     }
 
