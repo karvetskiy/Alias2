@@ -90,7 +90,7 @@ fun main(args: Array<String>) {
         val user = room.users.find { it.userid == r.queryParams("userid").toInt() }!!
         val score = r.queryParams("score").toInt()
         user.score = score
-        user.username = r.queryParams("un")
+        user.username = r.queryParams("username")
         ""
     }
 
