@@ -96,9 +96,6 @@ fun main(args: Array<String>) {
     Spark.get("winner"){r,_ ->
         val room = rooms.find {it.roomid == r.queryParams("roomid").toInt() }!!
         val winner = room.users.maxBy { it.score }!!
-        for(user in room.users){
-            user.score = 0
-        }
         winner.userid
 
     }
@@ -114,6 +111,9 @@ fun main(args: Array<String>) {
         val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
         room.isEnded = true
         room.isStarted = false
+        for (user in room.users){
+            user.score = 0
+        }
         ""
     }
 
