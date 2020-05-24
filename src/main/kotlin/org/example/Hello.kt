@@ -100,7 +100,7 @@ fun main(args: Array<String>) {
         for(user in room.users){
             user.score = 0
         }
-        winner
+        Gson().toJson(winner)
 
     }
 
