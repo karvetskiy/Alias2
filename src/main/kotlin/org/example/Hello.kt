@@ -103,6 +103,20 @@ fun main(args: Array<String>) {
 
     }
 
+    Spark.get("start"){r,_ ->
+        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
+        room.isStarted = true
+        room.isEnded = false
+        ""
+    }
+
+    Spark.get("end"){r,_ ->
+        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
+        room.isEnded = true
+        room.isStarted = false
+        ""
+    }
+
 
     //Обработка некорректных запросов
     Spark.get("*"){ _, _ ->
