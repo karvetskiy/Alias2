@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
     }
 
     Spark.get("getRoomState"){r,_ ->
-        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }
+        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
         Gson().toJson(room)
     }
 
@@ -88,8 +88,7 @@ fun main(args: Array<String>) {
     Spark.get("updateOnServer"){r,_ ->
         val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
         val user = room.users.find { it.userid == r.queryParams("userid").toInt() }!!
-        val score = r.queryParams("score").toInt()
-        user.score = score
+        user.score = r.queryParams("score").toInt()
         user.username = r.queryParams("username")
         ""
     }
@@ -100,7 +99,7 @@ fun main(args: Array<String>) {
         for(user in room.users){
             user.score = 0
         }
-        Gson().toJson(winner)
+        winner.userid
 
     }
 
