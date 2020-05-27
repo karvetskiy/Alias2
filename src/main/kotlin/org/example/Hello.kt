@@ -147,11 +147,11 @@ fun main(args: Array<String>) {
         minSet.last()
         val min = minSet.getInt("id")
         val maxSet = statement.executeQuery("SELECT max(id) FROM words")
-        maxSet.last()
+        maxSet.first()
         val max = maxSet.getInt("id")
         val rand = Random.nextInt(min, max+1)
         val wordSet = statement.executeQuery("SELECT word FROM words WHERE id = $rand")
-        wordSet.last()
+        wordSet.first()
         word = wordSet.getString("word")
         statement.close()
         return word
