@@ -14,6 +14,7 @@ var connection: Connection? = null
 
 fun main(args: Array<String>) {
 
+    getConnection()
 
     var portNumber = if (args.isNotEmpty()){
         args[0].toInt()
