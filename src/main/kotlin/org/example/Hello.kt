@@ -5,6 +5,7 @@ import spark.Spark
 import java.net.URISyntaxException
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.ResultSet
 import java.sql.SQLException
 import kotlin.random.Random
 
@@ -141,11 +142,12 @@ fun main(args: Array<String>) {
     }
 
     fun getWordFromDataBase(): String{
-        var word: String
+        var word = ""
         val statement = connection!!.createStatement()
-        val wordSet = statement.executeQuery("SELECT * FROM words")
-        wordSet.first()
-        word = wordSet.getString("word")
+        val wordSet = statement.executeQuery("SELECT word FROM words ORDER BY random() LIMIT 1")
+        while (wordSet.next()){
+            word = wordSet.getString("word")
+        }
         statement.close()
         return word
     }
