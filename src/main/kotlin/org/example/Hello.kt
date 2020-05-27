@@ -143,14 +143,7 @@ fun main(args: Array<String>) {
     fun getWordFromDataBase(): String{
         var word: String
         val statement = connection!!.createStatement()
-        val minSet = statement.executeQuery("SELECT min(id) FROM words")
-        minSet.last()
-        val min = minSet.getInt("id")
-        val maxSet = statement.executeQuery("SELECT max(id) FROM words")
-        maxSet.first()
-        val max = maxSet.getInt("id")
-        val rand = Random.nextInt(min, max+1)
-        val wordSet = statement.executeQuery("SELECT word FROM words WHERE id = $rand")
+        val wordSet = statement.executeQuery("SELECT word FROM words ORDER BY random() LIMIT 1")
         wordSet.first()
         word = wordSet.getString("word")
         statement.close()
