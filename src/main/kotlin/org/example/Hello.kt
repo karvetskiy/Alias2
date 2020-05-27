@@ -143,7 +143,7 @@ fun main(args: Array<String>) {
     fun getWordFromDataBase(): String{
         var word: String
         val statement = connection!!.createStatement()
-        val wordSet = statement.executeQuery("SELECT word FROM words ORDER BY random() LIMIT 1")
+        val wordSet = statement.executeQuery("SELECT * FROM words")
         wordSet.first()
         word = wordSet.getString("word")
         statement.close()
