@@ -15,6 +15,8 @@ var connection: Connection? = null
 fun main(args: Array<String>) {
 
     getConnection()
+    addWordToDataBase(words[0])
+    addWordToDataBase(words[1])
 
     var portNumber = if (args.isNotEmpty()){
         args[0].toInt()
