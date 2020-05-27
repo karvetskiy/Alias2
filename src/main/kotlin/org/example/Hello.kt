@@ -15,8 +15,9 @@ var connection: Connection? = null
 fun main(args: Array<String>) {
 
     getConnection()
-    addWordToDataBase(words[0])
-    addWordToDataBase(words[1])
+    for (word in words){
+        addWordToDataBase(word)
+    }
 
     var portNumber = if (args.isNotEmpty()){
         args[0].toInt()
@@ -149,13 +150,14 @@ fun main(args: Array<String>) {
         while (resultSet.next()){
             word = resultSet.getString("word")
         }
-
+        statement.close()
         return word
     }
 
     fun addWordToDataBase(word: String){
         val statement = connection!!.createStatement()
         statement.executeUpdate("INSERT INTO words(word) VALUES ('$word')")
+        statement.close()
     }
 
 
