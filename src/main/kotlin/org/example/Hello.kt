@@ -2,14 +2,19 @@ package org.example
 
 import com.google.gson.Gson
 import spark.Spark
-import kotlin.collections.ArrayList
+import java.net.URISyntaxException
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.SQLException
 import kotlin.random.Random
 
 val rooms = ArrayList<Room>()
 val words = listOf("КОМПОЗИТОР", "КАРНИЗ", "ЛОБОТОМИЯ", "САНАТОРИЙ", "РЕВИЗОР", "ЛАВАНДА", "ВЫДРА","РЕБЕНОК","ПАРИК","ЛОДКА","БОЛЬНИЦА","ОДИНОЧЕСТВО","ПОЭТ","МОЛНИЯ","ПЕЛЬМЕНИ","ВИТРАЖ","МАРКЕР","ВИТРИНА","СЕМЕЧКИ","КУРИЦА","СПОРТСМЕН","ПАРАД","ТАБЛИЦА","ЭКСКУРСИЯ","МАНТИЯ","ТРОСТЬ","АГИТАЦИЯ","РАВИОЛИ","ВКЛАД","КЛЕВЕР","РАДИАТОР")
-
+var connection: Connection? = null
 
 fun main(args: Array<String>) {
+
+    getConnection()
 
     var portNumber = if (args.isNotEmpty()){
         args[0].toInt()
@@ -81,9 +86,7 @@ fun main(args: Array<String>) {
 
 
     Spark.get("getWord"){_,_ ->
-        val index = Random.nextInt(words.size)
-        val word = words[index]
-        Gson().toJson(word)
+        Gson().toJson(getWordFromDataBase())
     }
 
     Spark.get("updateOnServer"){r,_ ->
@@ -125,9 +128,32 @@ fun main(args: Array<String>) {
     }
 }
 
-fun isRoomIDExist(id: Int, room: Room){
-    while (rooms.find{ it.roomid == id }!=null){
-        room.createRoomID()
+    fun isRoomIDExist(id: Int, room: Room) {
+        while (rooms.find { it.roomid == id } != null) {
+            room.createRoomID()
+        }
     }
-}
+
+    @Throws(URISyntaxException::class, SQLException::class)
+    private fun getConnection() {
+        val dbUrl = System.getenv("JDBC_DATABASE_URL")
+        connection = DriverManager.getConnection(dbUrl)
+    }
+
+    fun getWordFromDataBase(): String{
+        var word = ""
+        val statement = connection!!.createStatement()
+        val resultSet = statement.executeQuery("SELECT word FROM word ORDER BY RANDOM() LIMIT 1")
+        while (resultSet.next()){
+            word = resultSet.getString("word")
+        }
+
+        return word
+    }
+
+    fun addWordToDataBase(word: String){
+        val statement = connection!!.createStatement()
+        statement.executeUpdate("INSERT INTO words(word) VALUES ('$word')")
+    }
+
 
