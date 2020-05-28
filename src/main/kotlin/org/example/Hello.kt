@@ -1,5 +1,6 @@
 package org.example
 
+import com.example.alias_client.data.RequestBody
 import com.google.gson.Gson
 import spark.Spark
 import java.net.URISyntaxException
@@ -46,9 +47,10 @@ fun main(args: Array<String>) {
     }
 
     // Следующий игрок
-    Spark.get("nextUser"){r,_ ->
-        val roomid = r.queryParams("roomid").toInt()
-        val room = rooms.find { it.roomid == roomid }!!
+    Spark.post("nextUser"){r,_ ->
+        var room = Room()
+        val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
+        rooms.find { it.roomid == request.roomid }?.let { room = it }
         var activeUser = User()
         room.users.find { it.userid == room.activeUserID}?.let { activeUser = it }
         var nextUserIndex = room.users.indexOf(activeUser) + 1
@@ -59,11 +61,13 @@ fun main(args: Array<String>) {
         ""
     }
 
-    Spark.get("deleteUser"){r,_ ->
-        val roomid = r.queryParams("roomid").toInt()
-        val userid = r.queryParams("userid").toInt()
-        val room = rooms.find { it.roomid == roomid }!!
-        val user = room.users.find { it.userid == userid }!!
+    Spark.post("deleteUser"){r,_ ->
+        var room = Room()
+        var user = User()
+        val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
+        rooms.find { it.roomid == request.roomid }?.let { room = it }
+        room.users.find { it.userid == request.userid }?.let { user = it }
+
         if (room.users.size == 1){
             rooms.remove(room)
         }else {
@@ -90,9 +94,12 @@ fun main(args: Array<String>) {
         Gson().toJson(getWordFromDataBase())
     }
 
-    Spark.get("updateOnServer"){r,_ ->
-        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
-        val user = room.users.find { it.userid == r.queryParams("userid").toInt() }!!
+    Spark.post("updateOnServer"){r,_ ->
+        var room = Room()
+        var user = User()
+        val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
+        rooms.find { it.roomid == request.roomid }?.let { room = it }
+        room.users.find { it.userid == request.userid }?.let { user = it }
         user.score = r.queryParams("score").toInt()
         user.username = r.queryParams("username")
         ""
@@ -105,15 +112,19 @@ fun main(args: Array<String>) {
 
     }
 
-    Spark.get("start"){r,_ ->
-        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
+    Spark.post("start"){r,_ ->
+        var room = Room()
+        val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
+        rooms.find { it.roomid == request.roomid }?.let { room = it }
         room.isStarted = true
         room.isEnded = false
         ""
     }
 
-    Spark.get("end"){r,_ ->
-        val room = rooms.find { it.roomid == r.queryParams("roomid").toInt() }!!
+    Spark.post("end"){r,_ ->
+        val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
+        var room = Room()
+        rooms.find { it.roomid == r.queryParams("roomid").toInt() }?.let { room = it }
         room.isEnded = true
         room.isStarted = false
         for (user in room.users){

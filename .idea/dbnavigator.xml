@@ -83,7 +83,7 @@
           <database value="d98pq87ipjea4n" />
           <type value="USER_PASSWORD" />
           <user value="icdsfskeyhruon" />
-          <deprecated-pwd value="OTM0ODIzMDMwOTk5NzZkMDA5MGNmZGYzOGYwODUwYWY0YjU0NGQ3MmQyN2Q5MDNmMTlhYzcwZGRiNTE4YTZjZQ==" />
+          <deprecated-pwd value="" />
         </database>
         <properties>
           <auto-commit value="true" />
