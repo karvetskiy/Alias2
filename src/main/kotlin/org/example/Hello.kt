@@ -100,8 +100,8 @@ fun main(args: Array<String>) {
         val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
         rooms.find { it.roomid == request.roomid }?.let { room = it }
         room.users.find { it.userid == request.userid }?.let { user = it }
-        user.score = r.queryParams("score").toInt()
-        user.username = r.queryParams("username")
+        user.score = request.score
+        user.username = request.username
         ""
     }
 
