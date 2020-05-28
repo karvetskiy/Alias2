@@ -124,7 +124,7 @@ fun main(args: Array<String>) {
     Spark.post("end"){r,_ ->
         val request = Gson().fromJson(r.body().toString(), RequestBody::class.java)
         var room = Room()
-        rooms.find { it.roomid == r.queryParams("roomid").toInt() }?.let { room = it }
+        rooms.find { it.roomid == request.roomid }?.let { room = it }
         room.isEnded = true
         room.isStarted = false
         for (user in room.users){
